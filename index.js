@@ -28,13 +28,13 @@ export default function index({
             ignoreConnectionErrors
         )
 
-        function renderAndSetCacheKey() {
+        async function renderAndSetCacheKey() {
           return renderRoute(route, context).then(async function (result) {
             if (!result.error && !result.redirected) {
-              await redisStore.write(key, serialize(result), expire)
+              await redisStore.write(key, serialize(result), expire);
             }
-            return result
-          })
+            return result;
+          });
         }
 
       return new Promise(async (resolve)=>{
@@ -43,7 +43,7 @@ export default function index({
           if (cachedResult) {
              resolve(deserialize(cachedResult))
            }else{
-             resolve(renderAndSetCacheKey())
+             resolve(await renderAndSetCacheKey())
            }
         }catch{
           resolve(renderRoute(route, context))
